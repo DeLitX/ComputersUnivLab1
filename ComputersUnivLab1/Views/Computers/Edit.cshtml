@@ -1,0 +1,114 @@
+﻿@model ComputersUnivLab1.Computer
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Computer</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Cpuid" class="control-label"></label>
+                <select id="Cpu" asp-for="Cpuid" class="form-control" asp-items="ViewBag.Cpuid"></select>
+                <span asp-validation-for="Cpuid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gpuid" class="control-label"></label>
+                <select id="Gpu" asp-for="Gpuid" class="form-control" asp-items="ViewBag.Gpuid"></select>
+                <span asp-validation-for="Gpuid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MotherboardId" class="control-label"></label>
+                <select id="Motherboard" asp-for="MotherboardId" class="form-control" asp-items="ViewBag.MotherboardId"></select>
+                <span asp-validation-for="MotherboardId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoolerId" class="control-label"></label>
+                <select id="Cooler" asp-for="CoolerId" class="form-control" asp-items="ViewBag.CoolerId"></select>
+                <span asp-validation-for="CoolerId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PowerSupplyId" class="control-label"></label>
+                <select asp-for="PowerSupplyId" class="form-control" asp-items="ViewBag.PowerSupplyId"></select>
+                <span asp-validation-for="PowerSupplyId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="RamsToComputers" class="control-label"></label>
+                <select asp-for="SelectedRam" class="form-control" asp-items="ViewBag.RamId" multiple></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ComputersToDrives" class="control-label"></label>
+                <select asp-for="SelectedDrive" class="form-control" asp-items="ViewBag.DriveId" multiple></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#Cpu").change(function () {
+                    $("#Motherboard").empty();
+                    $("#Cooler").empty();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("FilterMotherboards")',
+                        dataType: 'json',
+                        data: { cpu: $("#Cpu :selected").val(), gpu: $("#Gpu :selected").val() },
+                        success: function (states) {
+                            $.each(states, function (i, state) {
+                                $("#Motherboard").append('<option value="' + state.value + '">' + state.text + '</option>');
+                            });
+                        }
+
+                    });
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("FilterCoolers")',
+                        dataType: 'json',
+                        data: { cpu: $("#Cpu :selected").val()},
+                        success: function (states) {
+                            $.each(states, function (i, state) {
+                                $("#Cooler").append('<option value="' + state.value + '">' + state.text + '</option>');
+                            });
+                        }
+
+                    });
+                    return false;
+                    }
+                )
+                $("#Gpu").change(function () {
+                    $("#Motherboard").empty();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("FilterMotherboards")',
+                        dataType: 'json',
+                        data: { cpu: $("#Cpu :selected").val(), gpu: $("#Gpu :selected").val() },
+                        success: function (states) {
+                            $.each(states, function (i, state) {
+                                $("#Motherboard").append('<option value="' + state.value + '">' + state.text + '</option>');
+                            });
+                        }
+
+                    });
+                    return false;
+                    }
+                )
+            })
+        </script>
+}

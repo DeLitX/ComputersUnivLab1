@@ -1,0 +1,69 @@
+﻿@model ComputersUnivLab1.Motherboard
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Motherboard</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GpuinterfaceId" class="control-label"></label>
+                <select asp-for="GpuinterfaceId" class="form-control" asp-items="ViewBag.GpuinterfaceId"></select>
+                <span asp-validation-for="GpuinterfaceId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SocketId" class="control-label"></label>
+                <select asp-for="SocketId" class="form-control" asp-items="ViewBag.SocketId"></select>
+                <span asp-validation-for="SocketId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Formfactor" class="control-label"></label>
+                <input asp-for="Formfactor" class="form-control" />
+                <span asp-validation-for="Formfactor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RamtypeId" class="control-label"></label>
+                <select asp-for="RamtypeId" class="form-control" asp-items="ViewBag.RamtypeId"></select>
+                <span asp-validation-for="RamtypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ramcount" class="control-label"></label>
+                <input asp-for="Ramcount" class="form-control" />
+                <span asp-validation-for="Ramcount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Usbcount" class="control-label"></label>
+                <input asp-for="Usbcount" class="form-control" />
+                <span asp-validation-for="Usbcount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

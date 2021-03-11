@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using ComputersUnivLab1.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace ComputersUnivLab1
 {
     public class Startup
@@ -23,6 +26,8 @@ namespace ComputersUnivLab1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<ComputersContext>(options => options.UseSqlServer(connection));
             services.AddControllersWithViews();
         }
 
@@ -50,7 +55,7 @@ namespace ComputersUnivLab1
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Computers}/{action=Index}/{id?}");
             });
         }
     }

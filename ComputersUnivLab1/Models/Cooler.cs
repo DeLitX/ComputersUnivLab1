@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
 namespace ComputersUnivLab1
 {
+    [Display(Name = "Кулер")]
     public partial class Cooler
     {
         public Cooler()
@@ -14,9 +16,13 @@ namespace ComputersUnivLab1
         }
 
         public int Id { get; set; }
+        [Required(ErrorMessage = Constants.FIELD_MUST_NOT_BE_NULL)]
         public string Name { get; set; }
+        [Required(ErrorMessage = Constants.FIELD_MUST_NOT_BE_NULL)]
         public int Weight { get; set; }
+        [Required(ErrorMessage = Constants.FIELD_MUST_NOT_BE_NULL)]
         public int Tdp { get; set; }
+        [Required(ErrorMessage = Constants.FIELD_MUST_NOT_BE_NULL)]
         public int Price { get; set; }
 
         public virtual ICollection<Computer> Computers { get; set; }

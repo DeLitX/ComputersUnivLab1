@@ -1,0 +1,64 @@
+﻿@model ComputersUnivLab1.Computer
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Computer</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Cooler)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Cooler.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Cpu)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Cpu.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Gpu)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Gpu.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Motherboard)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Motherboard.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PowerSupply)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PowerSupply.Name)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RamsToComputers)
+        </dt>
+        <dd class="col-sm-10">
+
+            @{string text = (string)ViewBag.Rams;
+                @Html.DisplayFor(modelItem => text)}
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ComputersToDrives)
+        </dt>
+        <dd class="col-sm-10">
+            @{string text1 = (string)ViewBag.Drives;
+            @Html.DisplayFor(modelItem => text1)}
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

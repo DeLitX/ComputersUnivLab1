@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ComputersUnivLab1.Computer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Комп'ютери</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Cooler)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cpu)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gpu)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Motherboard)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PowerSupply)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RamsToComputers)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ComputersToDrives)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cooler.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cpu.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gpu.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Motherboard.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PowerSupply.Name)
+            </td>
+            <td>
+                @foreach (var i in item.RamsToComputers)
+                {
+                    var text = ((List<Ram>)ViewBag.Rams).Find(c => c.Id == i.Ramid).Name + '\n';
+                    @Html.DisplayFor(modelItem => text)
+                }
+            </td>
+            <td>
+                @foreach (var i in item.ComputersToDrives)
+                {
+                    var text = ((List<Drive>)ViewBag.Drives).Find(c=> c.Id==i.DriveId).Name +'\n';
+                    @Html.DisplayFor(modelItem => text)
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
