@@ -37,43 +37,91 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cooler.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cpu.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gpu.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Motherboard.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PowerSupply.Name)
-            </td>
-            <td>
-                @foreach (var i in item.RamsToComputers)
-                {
-                    var text = ((List<Ram>)ViewBag.Rams).Find(c => c.Id == i.Ramid).Name + '\n';
-                    @Html.DisplayFor(modelItem => text)
-                }
-            </td>
-            <td>
-                @foreach (var i in item.ComputersToDrives)
-                {
-                    var text = ((List<Drive>)ViewBag.Drives).Find(c=> c.Id==i.DriveId).Name +'\n';
-                    @Html.DisplayFor(modelItem => text)
-                }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cooler.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cpu.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gpu.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Motherboard.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PowerSupply.Name)
+                </td>
+                <td>
+                    @foreach (var i in item.RamsToComputers)
+                    {
+                        var text = ((List<Ram>)ViewBag.Rams).Find(c => c.Id == i.Ramid).Name + '\n';
+                        @Html.DisplayFor(modelItem => text)
+                    }
+                </td>
+                <td>
+                    @foreach (var i in item.ComputersToDrives)
+                    {
+                        var text = ((List<Drive>)ViewBag.Drives).Find(c => c.Id == i.DriveId).Name + '\n';
+                        @Html.DisplayFor(modelItem => text)
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<div class="container">
+    <div id="chart1"></div>
+</div>
+
+<div class="container">
+    <div id="chart2"></div>
+</div>
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            $.get('/api/Charts/CpuData', function (CpuData) {
+                data = google.visualization.arrayToDataTable(CpuData, false);
+                var option = {
+                    title: "Співвідношення кількості процесорів",
+                    width: 500,
+                    height: 400
+                };
+                chart = new google.visualization.PieChart(document.getElementById('chart1'));
+                chart.draw(data, option);
+            })
+        }
+    </script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            $.get('/api/Charts/GpuData', function (GpuData) {
+                data = google.visualization.arrayToDataTable(GpuData, false);
+                var option = {
+                    title: "Співвідношення кількості відеокарт",
+                    width: 500,
+                    height: 400
+                };
+                chart = new google.visualization.PieChart(document.getElementById('chart2'));
+                chart.draw(data, option);
+            })
+        }
+    </script>
+}
+
