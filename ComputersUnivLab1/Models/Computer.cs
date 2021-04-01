@@ -39,12 +39,35 @@ namespace ComputersUnivLab1
         [Required(ErrorMessage = Constants.FIELD_MUST_NOT_BE_NULL)]
         [Display(Name = "Диски")]
         public virtual ICollection<ComputersToDrive> ComputersToDrives { get; set; }
+        [Required(ErrorMessage = Constants.FIELD_MUST_NOT_BE_NULL)]
+        [Display(Name = "Диски")]
         [NotMapped]
         public int[] SelectedDrive { get; set; }
         [Required(ErrorMessage = Constants.FIELD_MUST_NOT_BE_NULL)]
         [Display(Name = "ОЗП")]
         public virtual ICollection<RamsToComputer> RamsToComputers { get; set; }
+        [Required(ErrorMessage = Constants.FIELD_MUST_NOT_BE_NULL)]
+        [Display(Name = "ОЗП")]
         [NotMapped]
         public int[] SelectedRam { get; set; }
+    }
+    public class ComputerComparer : IEqualityComparer<Computer>
+    {
+        bool IEqualityComparer<Computer>.Equals(Computer x, Computer y)
+        {
+            return x.Id == y.Id &&
+                x.Gpuid == y.Gpuid &&
+                x.Cpuid == y.Cpuid &&
+                x.MotherboardId == y.MotherboardId &&
+                x.CoolerId == y.CoolerId &&
+                x.PowerSupplyId == y.PowerSupplyId &&
+                x.ComputersToDrives == y.ComputersToDrives &&
+                x.RamsToComputers == y.RamsToComputers;
+        }
+
+        int IEqualityComparer<Computer>.GetHashCode(Computer obj)
+        {
+            return obj.Id;
+        }
     }
 }

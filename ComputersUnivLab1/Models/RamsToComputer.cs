@@ -13,5 +13,18 @@ namespace ComputersUnivLab1
 
         public virtual Computer Computer { get; set; }
         public virtual Ram Ram { get; set; }
+        
+    }
+    public class RamsToComputerComparer : IEqualityComparer<RamsToComputer>
+    {
+        bool IEqualityComparer<RamsToComputer>.Equals(RamsToComputer x, RamsToComputer y)
+        {
+            return x.Ramid == y.Ramid && x.ComputerId == y.ComputerId;
+        }
+
+        int IEqualityComparer<RamsToComputer>.GetHashCode(RamsToComputer obj)
+        {
+            return obj.Ramid + obj.ComputerId;
+        }
     }
 }

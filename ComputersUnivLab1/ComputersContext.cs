@@ -31,12 +31,12 @@ namespace ComputersUnivLab1
         public virtual DbSet<Ramtype> Ramtypes { get; set; }
         public virtual DbSet<Socket> Sockets { get; set; }
         public virtual DbSet<SocketsToCooler> SocketsToCoolers { get; set; }
+        private DeleteBehavior deleteBehaviour = DeleteBehavior.Cascade;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server= DESKTOP-T2J2V70\\MSSQLSERVER01; Database=Computers; Trusted_Connection=True; ");
             }
         }
@@ -52,32 +52,32 @@ namespace ComputersUnivLab1
                 entity.HasOne(d => d.Cooler)
                     .WithMany(p => p.Computers)
                     .HasForeignKey(d => d.CoolerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Computers_Coolers");
+                    .HasConstraintName("FK_Computers_Coolers")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.Cpu)
                     .WithMany(p => p.Computers)
                     .HasForeignKey(d => d.Cpuid)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Computers_CPUs");
+                    .HasConstraintName("FK_Computers_CPUs")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.Gpu)
                     .WithMany(p => p.Computers)
                     .HasForeignKey(d => d.Gpuid)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Computers_GPUs");
+                    .HasConstraintName("FK_Computers_GPUs")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.Motherboard)
                     .WithMany(p => p.Computers)
                     .HasForeignKey(d => d.MotherboardId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Computers_Motherboards");
+                    .HasConstraintName("FK_Computers_Motherboards")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.PowerSupply)
                     .WithMany(p => p.Computers)
                     .HasForeignKey(d => d.PowerSupplyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Computers_PowerSupplies");
+                    .HasConstraintName("FK_Computers_PowerSupplies")
+                    .OnDelete(deleteBehaviour);
             });
 
             modelBuilder.Entity<ComputersToDrive>(entity =>
@@ -85,14 +85,14 @@ namespace ComputersUnivLab1
                 entity.HasOne(d => d.Computer)
                     .WithMany(p => p.ComputersToDrives)
                     .HasForeignKey(d => d.ComputerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ComputersToDrives_Computers");
+                    .HasConstraintName("FK_ComputersToDrives_Computers")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.Drive)
                     .WithMany(p => p.ComputersToDrives)
                     .HasForeignKey(d => d.DriveId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ComputersToDrives_Drives");
+                    .HasConstraintName("FK_ComputersToDrives_Drives")
+                    .OnDelete(deleteBehaviour);
             });
 
             modelBuilder.Entity<Cooler>(entity =>
@@ -113,8 +113,8 @@ namespace ComputersUnivLab1
                 entity.HasOne(d => d.Socket)
                     .WithMany(p => p.Cpus)
                     .HasForeignKey(d => d.SocketId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CPUs_Sockets");
+                    .HasConstraintName("FK_CPUs_Sockets")
+                    .OnDelete(deleteBehaviour);
             });
 
             modelBuilder.Entity<Drive>(entity =>
@@ -135,8 +135,8 @@ namespace ComputersUnivLab1
                 entity.HasOne(d => d.Interface)
                     .WithMany(p => p.Gpus)
                     .HasForeignKey(d => d.InterfaceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_GPUs_GPUInterfaces");
+                    .HasConstraintName("FK_GPUs_GPUInterfaces")
+                    .OnDelete(deleteBehaviour);
             });
 
             modelBuilder.Entity<Gpuinterface>(entity =>
@@ -161,20 +161,20 @@ namespace ComputersUnivLab1
                 entity.HasOne(d => d.Gpuinterface)
                     .WithMany(p => p.Motherboards)
                     .HasForeignKey(d => d.GpuinterfaceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Motherboards_GPUInterfaces");
+                    .HasConstraintName("FK_Motherboards_GPUInterfaces")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.Ramtype)
                     .WithMany(p => p.Motherboards)
                     .HasForeignKey(d => d.RamtypeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Motherboards_RAMTypes");
+                    .HasConstraintName("FK_Motherboards_RAMTypes")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.Socket)
                     .WithMany(p => p.Motherboards)
                     .HasForeignKey(d => d.SocketId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Motherboards_Sockets");
+                    .HasConstraintName("FK_Motherboards_Sockets")
+                    .OnDelete(deleteBehaviour);
             });
 
             modelBuilder.Entity<PowerSupply>(entity =>
@@ -195,8 +195,8 @@ namespace ComputersUnivLab1
                 entity.HasOne(d => d.Type)
                     .WithMany(p => p.Rams)
                     .HasForeignKey(d => d.TypeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_RAMs_RAMTypes");
+                    .HasConstraintName("FK_RAMs_RAMTypes")
+                    .OnDelete(deleteBehaviour);
             });
 
             modelBuilder.Entity<RamsToComputer>(entity =>
@@ -208,14 +208,14 @@ namespace ComputersUnivLab1
                 entity.HasOne(d => d.Computer)
                     .WithMany(p => p.RamsToComputers)
                     .HasForeignKey(d => d.ComputerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_RAMsToComputers_Computers");
+                    .HasConstraintName("FK_RAMsToComputers_Computers")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.Ram)
                     .WithMany(p => p.RamsToComputers)
                     .HasForeignKey(d => d.Ramid)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_RAMsToComputers_RAMs");
+                    .HasConstraintName("FK_RAMsToComputers_RAMs")
+                    .OnDelete(deleteBehaviour);
             });
 
             modelBuilder.Entity<Ramtype>(entity =>
@@ -237,14 +237,14 @@ namespace ComputersUnivLab1
                 entity.HasOne(d => d.Cooler)
                     .WithMany(p => p.SocketsToCoolers)
                     .HasForeignKey(d => d.CoolerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SocketsToCoolers_Coolers");
+                    .HasConstraintName("FK_SocketsToCoolers_Coolers")
+                    .OnDelete(deleteBehaviour);
 
                 entity.HasOne(d => d.Socket)
                     .WithMany(p => p.SocketsToCoolers)
                     .HasForeignKey(d => d.SocketId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SocketsToCoolers_Sockets");
+                    .HasConstraintName("FK_SocketsToCoolers_Sockets")
+                    .OnDelete(deleteBehaviour);
             });
 
             OnModelCreatingPartial(modelBuilder);

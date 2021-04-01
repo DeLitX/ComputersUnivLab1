@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ComputersUnivLab1;
 using ComputersUnivLab1.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using ClosedXML.Excel;
 
 namespace ComputersUnivLab1.Controllers
 {
@@ -18,6 +21,207 @@ namespace ComputersUnivLab1.Controllers
         {
             _context = context;
         }
+        public ActionResult Export()
+        {
+            using (XLWorkbook workbook = new XLWorkbook(XLEventTracking.Disabled))
+            {
+                var parser = new ExcelParser(_context);
+                parser.addComputersToExcel(workbook);
+                /*parser.addCoolersToExcel(workbook);
+                parser.addCpusToExcel(workbook);
+                parser.addDrivesToExcel(workbook);
+                parser.addGpuInterfacesToExcel(workbook);
+                parser.addGpusToExcel(workbook);
+                parser.addMotherboardsToExcel(workbook);
+                parser.addPowerSuppliesToExcel(workbook);
+                parser.addRamsToExcel(workbook);
+                parser.addRamTypesToExcel(workbook);
+                parser.addSocketsToExcel(workbook);*/
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Flush();
+                    return new FileContentResult(stream.ToArray(),
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    {
+                        FileDownloadName = $"computers_{DateTime.UtcNow.ToShortDateString()}.xlsx"
+                    };
+                }
+            }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(IFormFile fileExcel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (fileExcel != null)
+                {
+                    using (var stream = new FileStream(fileExcel.FileName, FileMode.Create))
+                    {
+                        await fileExcel.CopyToAsync(stream);
+                        using (XLWorkbook workBook = new XLWorkbook(stream, XLEventTracking.Disabled))
+                        {
+                            var parser = new ExcelParser(_context);
+                            var computers = parser.getComputersFromExcel(workBook);
+                            /*var coolers = parser.getCoolersFromExcel(workBook);
+                            var cpus = parser.getCpusFromExcel(workBook);
+                            var drives = parser.getDrivesFromExcel(workBook);
+                            var gpuInterfaces = parser.getGpuInterfacesFromExcel(workBook);
+                            var gpu = parser.getGpusFromExcel(workBook);
+                            var motherboards = parser.getMotherboardsFromExcel(workBook);
+                            var powerSupplies = parser.getPowerSuppliesFromExcel(workBook);
+                            var rams = parser.getRamsFromExcel(workBook);
+                            var ramTypes = parser.getRamTypesFromExcel(workBook);
+                            var sockets = parser.getSocketsFromExcel(workBook);*/
+                            
+                            /*List<SocketsToCooler> socketsToCoolers = new List<SocketsToCooler>();
+                            for (int i = 0; i < coolers.Count(); i++)
+                            {
+                                for (int k = 0; k < coolers.ElementAt(i).SocketsToCoolers.Count(); k++)
+                                {
+                                    var temp = new SocketsToCooler
+                                    {
+                                        CoolerId = coolers.ElementAt(i).Id,
+                                        SocketId = coolers.ElementAt(i).SocketsToCoolers.ElementAt(k).SocketId
+                                    };
+                                    coolers.ElementAt(i).SocketsToCoolers.Add(temp);
+                                    socketsToCoolers.Add(temp);
+                                }
+                            }*/
+                            //replaceListInDB(socketsToCoolers, _context.SocketsToCoolers.ToList(),new SocketsToCoolerComparer());
+                            insertComputers(computers.ToList());
+                            //replaceListInDB(coolers, _context.Coolers.ToList());
+                            //replaceListInDB(cpus,  _context.Cpus.ToList());
+                            //replaceListInDB(drives, _context.Drives.ToList());
+                            //replaceListInDB(gpuInterfaces,  _context.Gpuinterfaces.ToList());
+                            //replaceListInDB(gpu,  _context.Gpus.ToList());
+                            //replaceListInDB(motherboards, _context.Motherboards.ToList());
+                            //replaceListInDB(powerSupplies,  _context.PowerSupplies.ToList());
+                            //replaceListInDB(rams,  _context.Rams.ToList());
+                            //replaceListInDB(ramTypes, _context.Ramtypes.ToList());
+                            //replaceListInDB(sockets,  _context.Sockets.ToList());
+                            //setIdentityInsert();
+                            await _context.SaveChangesAsync();
+                            List<RamsToComputer> ramToComputers = new List<RamsToComputer>();
+                            for (int i = 0; i < computers.Count(); i++)
+                            {
+                                for (int k = 0; k < computers.ElementAt(i).SelectedRam.Count(); k++)
+                                {
+                                    var temp = new RamsToComputer
+                                    {
+                                        ComputerId = computers.ElementAt(i).Id,
+                                        Ramid = computers.ElementAt(i).SelectedRam[k]
+                                    };
+                                    computers.ElementAt(i).RamsToComputers.Add(temp);
+                                    _context.Add(temp);
+                                }
+                            }
+                            List<ComputersToDrive> drivesToComputers = new List<ComputersToDrive>();
+                            for (int i = 0; i < computers.Count(); i++)
+                            {
+                                for (int k = 0; k < computers.ElementAt(i).SelectedDrive.Count(); k++)
+                                {
+                                    var temp = new ComputersToDrive
+                                    {
+                                        ComputerId = computers.ElementAt(i).Id,
+                                        DriveId = computers.ElementAt(i).SelectedDrive[k]
+                                    };
+                                    computers.ElementAt(i).ComputersToDrives.Add(temp);
+                                    _context.Add(temp);
+                                }
+                            }
+
+                            //replaceListInDB(ramToComputers, _context.RamsToComputers.ToList(),new RamsToComputerComparer());
+                            //replaceListInDB(drivesToComputers, _context.ComputersToDrives.ToList(),new ComputersToDriveComparer());
+                            await _context.SaveChangesAsync();
+                            //setIdentityNotInsert();
+                        }
+                    }
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        void insertComputers(List<Computer> computers)
+        {
+            foreach (var i in computers)
+            {
+                _context.Add(i);
+                _context.SaveChanges();
+            }
+        }
+        void setIdentityInsert()
+        {
+            _context.Database.ExecuteSqlRaw(
+             "SET IDENTITY_INSERT dbo.CPUs ON \n"
+            /*+ "SET IDENTITY_INSERT dbo.Drives ON \n"
+            + "SET IDENTITY_INSERT dbo.GPUInterfaces ON \n"
+            + "SET IDENTITY_INSERT dbo.GPUs ON \n"*/
+           // + "SET IDENTITY_INSERT dbo.Motherboards ON \n"
+            //+ "SET IDENTITY_INSERT dbo.PowerSupplies ON \n "
+            //+ "SET IDENTITY_INSERT dbo.RAMs ON \n"
+            /*+ "SET IDENTITY_INSERT dbo.RAMsToComputers ON \n"
+            + "SET IDENTITY_INSERT dbo.RAMTypes ON \n"
+            + "SET IDENTITY_INSERT dbo.Sockets ON \n"
+            + "SET IDENTITY_INSERT dbo.SocketsToCoolers ON \n"*/);
+        }
+        void setIdentityNotInsert()
+        {
+            _context.Database.ExecuteSqlRaw(
+              "SET IDENTITY_INSERT dbo.CPUs OFF \n"
+           /* + "SET IDENTITY_INSERT dbo.Drives OFF \n"
+            + "SET IDENTITY_INSERT dbo.GPUInterfaces OFF \n"
+            + "SET IDENTITY_INSERT dbo.GPUs OFF \n"*/
+           // + "SET IDENTITY_INSERT dbo.Motherboards OFF \n"
+           // + "SET IDENTITY_INSERT dbo.PowerSupplies OFF \n"
+            //+ "SET IDENTITY_INSERT dbo.RAMs OFF \n"
+           /* + "SET IDENTITY_INSERT dbo.RAMsToComputers OFF \n"
+            + "SET IDENTITY_INSERT dbo.RAMTypes OFF \n"
+            + "SET IDENTITY_INSERT dbo.Sockets OFF \n"
+            + "SET IDENTITY_INSERT dbo.SocketsToCoolers OFF \n"*/);
+        }
+        void replaceListInDB<T>(ICollection<T> listToInsert, ICollection<T> listToReplace)
+        {
+            var substraction = listToReplace.Except(listToInsert).ToList();
+            /*foreach (var i in substraction)
+            {
+                _context.Remove(i);
+            }*/
+            foreach (var i in listToInsert)
+            {
+                try
+                {
+                    _context.Add(i);
+                }
+                catch(InvalidOperationException e)
+                {
+                    _context.Update(i);
+                }
+            }
+        }
+        void replaceListInDB<T>(ICollection<T>listToInsert,ICollection<T> listToReplace, IEqualityComparer<T> comparer)
+        {
+            var substraction = listToReplace.Except(listToInsert,comparer).ToList();
+            foreach(var i in substraction)
+            {
+                _context.Remove(i);
+            }
+            foreach(var i in listToInsert)
+            {
+                /*try
+                {*/
+                    _context.Add(i);
+                /*}
+                catch (InvalidOperationException e)
+                {
+                    _context.Update(i);
+                }*/
+            }
+        }
+
+
         public JsonResult FilterMotherboards(int cpu, int gpu)
         {
             List<Motherboard> ByCpu = new List<Motherboard>();
